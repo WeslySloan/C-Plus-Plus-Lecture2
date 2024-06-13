@@ -9,6 +9,7 @@ class DoubleLinkedList
 private:
 	int size;
 
+public:
 	struct Node
 	{
 		T data;
@@ -19,7 +20,6 @@ private:
 	Node* head;
 	Node* tail;
 
-public:
 	DoubleLinkedList()
 	{
 		size = 0;
@@ -108,9 +108,87 @@ public:
 		size++;
 	}
 
+	void PopFront()
+	{
+		if (head == nullptr)
+		{
+			cout << "Linked List is Empty";
+		}
+		else
+		{
+			Node* deleteNode = head;
+			if (head == tail)
+			{
+				head = nullptr;
+				tail = nullptr;
+				// delete deleteNode;
+			}
+			else
+			{
+				// deleteNode->next->previous = nullptr;
+
+				head = head->next;
+				head->previous = nullptr;
+				// delete deleteNode;
+			}
+			delete deleteNode;
+			size--;
+		}
+	}
+
+	void Insert(Node * position, T data)
+	{
+		if (head == nullptr)
+		{
+			PushBack(data);
+		}
+		else
+		{
+			Node* previousNode = position;
+			Node* nextNode = position->next;
+
+			if (nextNode == nullptr)
+			{
+				PushBack(data);
+			}
+			else if (previousNode->previous == nullptr)
+			{
+				PushFront(data);
+			}
+			else
+			{
+				Node* newNode = new Node;
+
+				newNode->data = data;
+
+				previousNode->next = newNode;
+				newNode->previous = newNode;
+
+				newNode->next = nextNode;
+				newNode->previous = previousNode;
+
+				size++;
+			}
+
+		}
+	}
+
 	int& Size()
 	{
 		return size;
+	}
+
+	Node * Begin()
+	{
+		return head;
+	}
+
+	~DoubleLinkedList()
+	{
+		while (head != nullptr)
+		{
+			PopFront();
+		}
 	}
 
 	void Show()
@@ -134,9 +212,16 @@ int main()
 	doubleLinkedList.PushFront(20);
 	doubleLinkedList.PushFront(30);
 
+	cout << "Double Linked List의 Begin : " << doubleLinkedList.Begin()->next << endl;
+
 	cout << "Double Linked List의 Size : " << doubleLinkedList.Size() << endl;
 
+	doubleLinkedList.Insert(doubleLinkedList.Begin()->next, 20);
+
 	doubleLinkedList.Show();
+
+	// std::initializer_list<int> list;
+
 
 	return 0;
 }
