@@ -9,29 +9,32 @@ private:
 	struct Node
 	{
 		T data;
+
 		Node* left;
 		Node* right;
-
 	};
 
 	Node* root;
-
 public:
-    BinarySearchTree()
-    {
-        root = nullptr;
-    }
 
-    Node* Root()
-    {
-        return root;
-    }
+	BinarySearchTree()
+	{
+		root = nullptr;
+	}
+
+	Node* Root()
+	{
+		return root;
+	}
 
 	Node* CreateNode(T data)
 	{
 		Node* newNode = new Node();
+
 		newNode->data = data;
+
 		newNode->left = nullptr;
+
 		newNode->right = nullptr;
 
 		return newNode;
@@ -82,9 +85,105 @@ public:
 		}
 	}
 
+	void Remove(T data)
+	{
+		if (root == nullptr)
+		{
+			cout << "Binary Search Tree is Empty" << endl;
+		}
+		else
+		{
+			Node* currentNode = root;
+			Node* parentNode = nullptr;
+
+			while (currentNode != nullptr && currentNode->data != data)
+			{
+				if (currentNode->data > data)
+				{
+					parentNode = currentNode;
+					currentNode = currentNode->left;
+				}
+				else
+				{
+					parentNode = currentNode;
+					currentNode = currentNode->right;
+				}
+			}
+
+			if (currentNode == nullptr)
+			{
+				cout << "Data Not found in the Binary Search Tree" << endl;
+			}
+			else if (currentNode->left == nullptr && currentNode->right == nullptr)
+			{
+				if (parentNode != nullptr)
+				{
+					if (parentNode->left == currentNode)
+					{
+						parentNode->left = nullptr;
+					}
+					else
+					{
+						parentNode->right = nullptr;
+					}
+				}
+				else
+				{
+					root = nullptr;
+				}
+			}
+			else if (currentNode->left == nullptr || currentNode->right == nullptr)
+			{
+				Node* childNode = nullptr;
+
+				if (currentNode->left != nullptr)
+				{
+					childNode = currentNode->left;
+				}
+				else
+				{
+					childNode = currentNode->right;
+				}
+
+				if (parentNode != nullptr)
+				{
+					if (parentNode->left == currentNode)
+					{
+						parentNode->left = childNode;
+					}
+					else
+					{
+						parentNode->right = childNode;
+					}
+				}
+			}
+			else
+			{
+				Node* childNode = currentNode->right;
+				Node* traceNode = childNode;
+
+				while (childNode->left != nullptr)
+				{
+					traceNode = childNode;
+					childNode = childNode->left;
+				}
+
+				currentNode->data = childNode->data;
+
+				traceNode->left = childNode->right;
+
+				delete childNode;
+
+				return;
+			}
+
+			delete currentNode;
+		}
+	}
+
 	bool Find(T data)
 	{
-		Node * currentNode = root;
+		Node* currentNode = root;
 
 		if (currentNode == nullptr)
 		{
@@ -92,21 +191,36 @@ public:
 		}
 		else
 		{
-			if (currentNode->data == data)
+			while (currentNode != nullptr)
 			{
-				return true;
-			}
-			else
-			{
-				if (currentNode->data > data)
+				if (currentNode->data == data)
 				{
-					currentNode = currentNode->left;
+					return true;
 				}
 				else
 				{
-					currentNode = currentNode->right;
+					if (currentNode->data > data)
+					{
+						currentNode = currentNode->left;
+					}
+					else
+					{
+						currentNode = currentNode->right;
+					}
 				}
 			}
+
+			return false;
+		}
+	}
+
+	void Inorder(Node* root)
+	{
+		if (root != nullptr)
+		{
+			Inorder(root->left);
+			cout << root->data << " ";
+			Inorder(root->right);
 		}
 	}
 
@@ -124,85 +238,26 @@ public:
 	{
 		Destroy(root);
 	}
-
-	void Inorder(Node* root)
-	{
-		if (root != nullptr)
-		{
-			Inorder(root->left);
-			cout << root->data << " ";
-			Inorder(root->right);
-		}
-	}
-
-    /*void Insert(T data)
-    {
-        if (root == nullptr)
-        {
-            root = CreateNode(data);
-            return;
-        }
-
-        Node* current = root;
-        Node* parent = nullptr;
-
-        while (current != nullptr)
-        {
-            parent = current;
-            if (data < current->data)
-            {
-                current = current->left;
-            }
-            else
-            {
-                current = current->right;
-            }
-        }
-
-        if (data < parent->data)
-        {
-            parent->left = CreateNode(data);
-        }
-        else
-        {
-            parent->right = CreateNode(data);
-        }
-    }
-
-    void Inorder(Node* root)
-    {
-        if (root != nullptr)
-        {
-            Inorder(root->left);
-            cout << root->data << " ";
-            Inorder(root->right);
-        }
-    }
-
-    void Inorder()
-    {
-        Inorder(root);
-    }*/
 };
+
 int main()
 {
-    BinarySearchTree<int> binarysearchtree;
+	BinarySearchTree<int> binarySearchTree;
 
-    binarysearchtree.Insert(40);
-    binarysearchtree.Insert(80);
-    binarysearchtree.Insert(70);
-    binarysearchtree.Insert(60);
-    binarysearchtree.Insert(50);
+	binarySearchTree.Insert(10);
+	binarySearchTree.Insert(7);
+	binarySearchTree.Insert(15);
+	binarySearchTree.Insert(5);
+	binarySearchTree.Insert(3);
 
-    binarysearchtree.Insert(20);
-    binarysearchtree.Insert(30);
 
-	cout << binarysearchtree.Find(20) << endl;
+	cout << binarySearchTree.Find(5) << endl;
+	cout << binarySearchTree.Find(0) << endl;
 
-    binarysearchtree.Inorder(binarysearchtree.Root());
+	binarySearchTree.Remove(5);
+	binarySearchTree.Remove(7);
 
+	binarySearchTree.Inorder(binarySearchTree.Root());
 
 	return 0;
 }
-
-
